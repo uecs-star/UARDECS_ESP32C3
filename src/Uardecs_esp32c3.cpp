@@ -3,8 +3,11 @@
 //Modified by Hideto Kurosaki on Apr., 2026 for RaspberryPi PICO
 //Modified By Takehiko Hoshi on Oct. 10, 2026 for ESP32C3
 //Modified CCM donor search (Allow partial matches for search keywords.)
+// Version 1.0.0  2026.10.10
+//  Released as ESP32C3 middleware for UECS standard communication.
+// Version 1.0.1  2026.10.14
+//  Revised HTTP reception timing to enable more stable communication.
 
-// Version 1.0.0
 #include "Uardecs_esp32c3.h"
 char UECSbuffer[BUF_SIZE];//main buffer
 char UECStempStr20[MAX_TYPE_CHAR]; //sub buffer for TYPE=
@@ -1486,26 +1489,61 @@ void HTTPGetFormDataFillCCMAttributePage()
 
 }
 //---------------------------------------------####################
-void HTTPcheckRequest(){
-UECSclient=UECSlogserver.accept();
-  // Only the HTTP request line is needed.  accept() can return before its TCP
-  // payload is available, so an immediate read() occasionally returned no
-  // data or a partial request and incorrectly produced the Error page.
-  // Stream::readBytesUntil waits for the complete line, with a short timeout
-  // so the main UECS loop cannot be held indefinitely by an idle client.
-  
-  if(UECSclient)
-  {
-      UECSclient.setTimeout(250);
-      const size_t requestLength =
-          UECSclient.readBytesUntil('\n', UECSbuffer, BUF_SIZE - 1);
-      if(requestLength == 0) {
-        UECSclient.stop();
-        return;
+namespace {
+  // A single deadline covers the entire request, including browser preconnects.
+  // Keep only the request line; consume headers through the terminating blank
+  // line before sending a response or closing the socket.
+  bool HTTPReadRequestHeaders() {
+    const unsigned long started = millis();
+    size_t requestLength = 0;
+    size_t headerLineLength = 0;
+    size_t received = 0;
+    bool firstLine = true;
+    while (millis() - started < 1000UL && received < 8192) {
+      if (!UECSclient.available()) {
+        if (!UECSclient.connected()) return false;
+        delay(1); // Let the Wi-Fi and idle tasks run while waiting for TCP data.
+        continue;
       }
-      UECSbuffer[requestLength] = '\0';
-      
+      const int c = UECSclient.read();
+      if (c < 0) return false;
+      ++received;
+      if (c == '\n') {
+        if (firstLine) {
+          if (requestLength == 0) return false;
+          UECSbuffer[requestLength] = '\0';
+          firstLine = false;
+        } else if (headerLineLength == 0) {
+          return true;
+        }
+        headerLineLength = 0;
+      } else if (c != '\r') {
+        if (firstLine) {
+          if (requestLength >= BUF_SIZE - 1) return false;
+          UECSbuffer[requestLength++] = (char)c;
+        } else {
+          ++headerLineLength;
+        }
+      }
+    }
+    return false; // Incomplete/oversized requests must never execute a form.
+  }
 
+  void HTTPEndRequest() {
+    UECSclient.stop();
+    ClearMainBuffer(); // The same buffer is also used by UDP in UECSloop().
+  }
+}
+
+void HTTPcheckRequest(){
+  UECSclient = UECSlogserver.accept();
+  if (!UECSclient) return;
+  UECSclient.setTimeout(250);
+  if (!HTTPReadRequestHeaders()) {
+    HTTPEndRequest();
+    return;
+  }
+  {
       HTTPFilterToBuffer();//Get first line before "&S=" and eliminate unnecessary code
 			int progPos = 0;
 			if(UECSFindPGMChar(UECSbuffer,&(UECSaccess_NOSPC_GETP0[0]),&progPos))
@@ -1558,7 +1596,7 @@ UECSclient=UECSlogserver.accept();
 
 		else {HTTPsendPageError();}
   }
-  UECSclient.stop();
+  HTTPEndRequest();
 }
 
 
@@ -2042,20 +2080,17 @@ if(wp>BUF_HTTP_REFRESH_SIZE)
 }
 void HTTPRefreshBuffer(void)
 {
-	
-	
-    UECSbuffer[wp]='\0';
-    UECSclient.print(UECSbuffer);
+    UECSbuffer[wp] = '\0';
+    // write() reports short/failed sends; do not continue a truncated response.
+    if (wp > 0 && UECSclient.write((const uint8_t*)UECSbuffer, wp) != (size_t)wp) {
+      UECSclient.stop();
+    }
     ClearMainBuffer();
-    
-
 }
+
 void HTTPCloseBuffer(void)
 {
-	
-if(strlen(UECSbuffer)>0)
-	{UECSclient.print(UECSbuffer);}
-
+    HTTPRefreshBuffer();
 }
 //------------------------------------
 //delete \r,\n and contorol code

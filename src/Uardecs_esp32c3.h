@@ -5,7 +5,7 @@
 // Modified CCM donor search (Allow partial matches for search keywords.)
 
 #define UARDECS_FOR "UARDECS_ESP32C3"
-#define UARDECS_ON  "261010_ver.1.0.0"
+#define UARDECS_ON  "261014_ver.1.0.1"
 //
 #ifndef Uardecs_esp32c3_h
 #define Uardecs_esp32c3_h
