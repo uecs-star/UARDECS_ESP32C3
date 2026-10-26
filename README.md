@@ -17,6 +17,7 @@ II. Points to note when using the ESP32C3 board with UARDECS:
 UARDECS_ESP32C3 ライブラリ
 
 　日本の施設園芸分野で広く利用されている「ユビキタス環境制御システム（UECS）」規格に準拠した通信機能を提供するライブラリです。
+
 　本ライブラリは、UECS通信プロトコルに準拠したWi-Fi経由のUDPパケットブロードキャスト通信やWebサーバー機能を提供することで、ESP32C3搭載ボード上でのUECS対応アプリケーション開発を容易にします。ESP32C3-OLED、XIAO ESP32C3、および互換ボードをサポートしています。バージョン1.0.1では、HTTP受信の安定性が向上しています。ライセンス情報については、LICENSE.mdをご参照ください。
 
 I.従来版のUARDECSとESP32C3版UARDECSとの相違
