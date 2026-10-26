@@ -10,7 +10,7 @@ I. Differences between the ESP32C3 version and the previous version of the UARDE
 (3) As a substitute for the EEPROM used on Arduino boards, this library uses 4,096 bytes of unused ESP32C3 program flash as nonvolatile storage. It also uses 4,096 bytes of SRAM as a cache allocated after startup, reducing the memory available to the application by that amount.
 
 II. Points to note when using the ESP32C3 board with UARDECS:
-(1) GPIO 3 is designated as the signal pin for entering safe mode. For the XIAO ESP32C3 board, this corresponds to pin D1. Connecting this pin to GND (0V) activates safe mode. The pin state is checked only once during the ARDECS setup process; changing the state afterward has no effect.
+(1) GPIO 3 is designated as the signal pin for entering safe mode. For the XIAO ESP32C3 board, this corresponds to pin D1. Connecting this pin to GND (0V) activates safe mode. The pin state is checked only once during the UARDECS setup process; changing the state afterward has no effect.
 (2) On the ESP32, variables declared with `const` are automatically allocated to flash memory, so using the `PROGMEM=` assignment operator is no longer necessary.
 (3) The ESP32C3 comes with a pre-configured MAC address, so manual definition is not required. However, since the device connects via Wi-Fi, you must configure the SSID and password for safe mode. To conserve memory, the character limit is set to 25 characters (values ​​exceeding 25 characters cannot be configured). Additionally, safe mode utilizes DHCP (automatic addressing) to assign the network address automatically.
 
