@@ -380,18 +380,22 @@ void setup(){
 (1) Setting up the compilation environment (verified with Arduino IDE 2.3.10)
 (a) Installing the ESP32 board library: Go to the menu and select "File" > 
 "Preferences". Enter the following URL into the "Additional Boards Manager URLs" 
-field and click "OK": https://githubusercontent.com
+field and click "OK": 
+https://espressif.github.io/arduino-esp32/package_esp32_index.json
 (b) Installing the ESP32 board: Go to the menu and select "Tools" > "Board" > 
 "Boards Manager". Type "esp32" into the search bar. Install "esp32" by Espressif 
 Systems.
-(c) Connect the ESP32-C3 board to your computer using a USB cable. From the menu, 
+(c) Installing this library:
+Go to the menu and select [Tools] > [Manage Libraries...]. Enter "UARDECS" into
+ the search box, then install "UARDECS_ESP32C3".
+(d) Connect the ESP32-C3 board to your computer using a USB cable. From the menu, 
 select "Tools" > "Board" > "ESP32 Arduino" and choose the board you are using 
 (e.g., ESP32C3 Dev Module, XIAO_ESP32C3, etc.). Select the connected "Serial Port". 
 These steps establish the minimum environment required to compile this file. 
-Please repeat step (c) whenever you swap the board, even if it is the same model.
-(d) Click the "->" (arrow) icon in the top-left corner of the IDE screen to start 
+Please repeat step (d) whenever you swap the board, even if it is the same model.
+(e) Click the "->" (arrow) icon in the top-left corner of the IDE screen to start 
 compilation and program upload.
-(e) Once the upload is complete, the board will automatically reset and the 
+(f) Once the upload is complete, the board will automatically reset and the 
 program will begin execution.
 
 (2) Regarding Safe Mode and Wi-Fi Network Usage
@@ -433,7 +437,7 @@ booting.
 ・GPIO9: Connected to the BOOT button. *As this is a critical pin for determining 
 the boot mode, connecting external circuitry that constantly pulls it to GND will 
 prevent program uploading and booting.
-・GPIO12 – GPIO17: Dedicated to the internal SPI flash memory. Since they constantly 
+・GPIO12 - GPIO17: Dedicated to the internal SPI flash memory. Since they constantly 
 engage in high-speed communication to read the program, they cannot be used as 
 general-purpose GPIOs at all.
 ・GPIO18, GPIO19: Used for USB-JTAG/USB-Serial conversion functions (program uploading 
@@ -485,21 +489,25 @@ capable of non-volatile data storage.
 
 (1)コンパイル環境の構築(Arduino IDE2.3.10で確認済み)
 (a)ESP32用ボードライブラリのインストール
-メニューの [ファイル] ＞ [環境設定] を開きます。「追加のボードマネージャのURL」
-に次のURLを入力して [OK] を押します。https://githubusercontent.com
+メニューの [ファイル] ＞ [基本設定] を開きます。「追加のボードマネージャのURL」
+に次のURLを入力して [OK] を押します。
+https://espressif.github.io/arduino-esp32/package_esp32_index.json
 (b)ESP32ボードのインストール
 メニューの [ツール] ＞ [ボード] ＞ [ボードマネージャー] を開きます。検索窓に 
 esp32 と入力します。Espressif Systems の 「esp32」 をインストールします。
-(c)パソコンとESP32-C3ボードをUSBケーブルで接続します。
+(c)このライブラリの導入
+メニューの [ツール] ＞ [ライブラリを管理…] を開きます。検索窓に 
+UARDECS と入力します。UARDECS_ESP32C3をインストールします。
+(d)パソコンとESP32-C3ボードをUSBケーブルで接続します。
 メニューの [ツール] ＞ [ボード] ＞ [ESP32 Arduino] から使用しているボード
 （例：ESP32C3 Dev Module や XIAO_ESP32C3 など）を選択します。接続した 
 [シリアルポート] を選択します
 
-以上の処理で最低限このファイルがコンパイル可能な環境が整います。(c)の操作は同
+以上の処理で最低限このファイルがコンパイル可能な環境が整います。(d)の操作は同
 じ型番でもボードを交換するたびに実行してください。
 
-(d)IDE画面左上の→マークをクリックするとコンパイルとプログラムの転送が始まります。
-(e)転送が終わると自動的にボードがリセットされプログラムが実行されます。
+(e)IDE画面左上の→マークをクリックするとコンパイルとプログラムの転送が始まります。
+(f)転送が終わると自動的にボードがリセットされプログラムが実行されます。
 
 (2)セーフモードとWiFiネットワークの利用について
 (a)セーフモード(最初にDHCP接続するときのモード)はGPIO 3の端子の接続で判定します。
