@@ -14,6 +14,15 @@ II. Points to note when using the ESP32C3 board with UARDECS:
 (2) On the ESP32, variables declared with `const` are automatically allocated to flash memory, so using the `PROGMEM=` assignment operator is no longer necessary.
 (3) The ESP32C3 comes with a pre-configured MAC address, so manual definition is not required. However, since the device connects via Wi-Fi, you must configure the SSID and password for safe mode. To conserve memory, the character limit is set to 25 characters (values ​​exceeding 25 characters cannot be configured). Additionally, safe mode utilizes DHCP (automatic addressing) to assign the network address automatically.
 
+III. Revision
+Version 1.0.0  2026.10.10
+ Released as ESP32C3 middleware for UECS standard communication.
+Version 1.0.1  2026.10.14
+ Revised HTTP reception timing to enable more stable communication.
+Version 1.0.2  2026.11.16
+ To avoid processing slow down, changed timing to retry failed WiFi connection from every sending time to every a minute.
+
+
 UARDECS_ESP32C3 ライブラリ
 
 　日本の施設園芸分野で広く利用されている「ユビキタス環境制御システム（UECS）」規格に準拠した通信機能を提供するライブラリです。
@@ -29,3 +38,11 @@ II.UARDECSでESP32C3基板を使用するうえでの注意点
 (1)セーフモードにする信号ピンはGPIO 3に設定しています。XIAO ESP32C3ボードの場合はD1ピンになります。これをGND(0V)にすることでセーフモードになります。ピンの状態チェックはUARDECSのセットアップ時に一度だけです。以降変えても影響ありません。
 (2)ESP32からconst宣言だけでフラッシュメモリに割り当てられるのでPROGMEM=を使う必要はなくなりました。
 (3)ESP32C3にはあらかじめmacアドレスが設定されていますので、定義不要になりました。また、WiFi接続になりますのでセーフモードの時のSSIDとpasswordの設定が必要です。メモリ容量節約のため文字長は25文字までにしています(25文字以上は設定できません)。そして、セーフモードではDHCP(自動アドレス)接続になり、自動でアドレス設定されます。
+
+III. 改訂履歴
+バージョン 1.0.0  2026.10.10
+ UECS標準通信用ESP32C3ミドルウェアとしてリリース。
+バージョン 1.0.1  2026.10.14
+ HTTP受信のタイミングを修正し、通信の安定性を向上。
+バージョン 1.0.2  2026.11.16
+ 処理の遅延を防ぐため、Wi-Fi接続失敗時の再試行タイミングを、送信のたびに行う方式から1分間隔に変更。

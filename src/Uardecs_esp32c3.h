@@ -1,11 +1,17 @@
 //  Uardecs_esp32c3.h - Library for UECS on ESP32-C3 Wi-Fi
 // Originated Ken-ichiro Yasuba on 2013 for Original Arduino CPUs
 // Modified by Hideto Kurosaki on Apr., 2026 for RaspberryPi PICO
-// Modified By Takehiko Hoshi on Oct. 10, 2026 for ESP32C3
-// Modified CCM donor search (Allow partial matches for search keywords.)
+// Modified By Takehiko Hoshi for ESP32C3
+// Version 1.0.0  2026.10.10
+//  Released as ESP32C3 middleware for UECS standard communication.
+// Version 1.0.1  2026.10.14
+//  Revised HTTP reception timing to enable more stable communication.
+// Version 1.0.2  2026.11.16
+//  To avoid processing slow down, changed timing to retry failed WiFi 
+//  connection from every sending time to every a minute.
 
 #define UARDECS_FOR "UARDECS_ESP32C3"
-#define UARDECS_ON  "261014_ver.1.0.1"
+#define UARDECS_ON  "261116_ver.1.0.2"
 //
 #ifndef Uardecs_esp32c3_h
 #define Uardecs_esp32c3_h

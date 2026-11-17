@@ -7,6 +7,9 @@
 //  Released as ESP32C3 middleware for UECS standard communication.
 // Version 1.0.1  2026.10.14
 //  Revised HTTP reception timing to enable more stable communication.
+// Version 1.0.2  2026.11.16
+//  To avoid processing slow down, changed timing to retry failed WiFi 
+//  connection from every sending time to every a minute.
 
 #include "Uardecs_esp32c3.h"
 char UECSbuffer[BUF_SIZE];//main buffer
@@ -287,7 +290,8 @@ UECSAddCurrentIPAddressToBuffer();
 
 UDPAddPGMCharToBuffer(&(UECSccm_FOOTER1[0]));
 
-//send ccm
+//send ccm if WiFi conncted
+if(UECSWiFiConnected()) {
   UECS_UDP16520.beginPacket(_ccm->address, 16520);
   UECS_UDP16520.write(reinterpret_cast<const uint8_t*>(UECSbuffer), strlen(UECSbuffer));
 
@@ -295,7 +299,7 @@ UDPAddPGMCharToBuffer(&(UECSccm_FOOTER1[0]));
   		{
 			UECSresetWiFi();//when UDP send fails, reconnect Wi-Fi
   		}
-
+  }
 }
 
 void UECSupRecCCM(UECSCCM* _ccm, UECSTEMPCCM* _ccmRec){
@@ -1886,6 +1890,8 @@ if(UECSnowmillis<UECSlastmillis)
     {
       UserEveryMinute();
       UECSsyscounter60s = 0;  
+      // if WiFi is not connected, try connction
+      if(!UECSWiFiConnected()) UECSresetWiFi();
     }   
     
     
